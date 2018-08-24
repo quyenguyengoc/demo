@@ -1,0 +1,60 @@
+<div class="row">
+  <div class="col-9">
+    <h2>Chat Messages</h2>
+    <div class="list-messages">
+      <% @room.messages.includes(:sender).each do |message| %>
+        <div class="message-box <%= 'darker' if message.sender == @current_user %>">
+          <%= render partial: 'messages/message', locals: { message: message } %>
+        </div>
+      <% end %>
+    </div>
+    <div class="new-message-box">
+      <%= form_for(:message, url: room_messages_path(@room), remote: true) do |f| %>
+        <%= text_area(:message, :content, placeholder: 'Message...') %>
+        <%= f.submit 'Submit' %>
+      <% end %>
+    </div>
+  </div>
+  <div class="col-3">
+    <h2>Members</h2>
+    <ul class="list-group member-list">
+      <li class="list-group-item list-group-item-primary">
+        <%= image_tag @room.owner.avatar, class: 'rounded-circle img-thumbnail user-avatar' %>
+        <%= @room.owner.fullname %>
+      </li>
+      <% @room.participants.each do |member| %>
+        <%= render partial: 'shared/rooms/member', locals: { member: member } %>
+      <% end %>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#message_content').emojioneArea();
+  });
+
+  App.cable.subscriptions.create({ channel: 'RoomChannel', id: <%= @room.id %> }, {
+    received: function(res) {
+
+      var current_user_id = <%= @current_user.id %>;
+      var html = '';
+      switch(res['event']) {
+        case 'new_message':
+          if (current_user_id == res['sender_id']) {
+            html = '<div class="message-box darker">';
+          } else {
+            html = '<div class="message-box">';
+          }
+          html += res['html'] + '</div>';
+          $('.list-messages').append(html);
+          $(".list-messages").animate({ scrollTop: $('.list-messages').prop("scrollHeight")}, 1000);
+          break;
+        case 'new_member':
+          html = res['html'];
+          $('.member-list').append(html);
+          $(".member-list").animate({ scrollTop: $('.member-list').prop("scrollHeight")}, 1000);
+          break;
+      }
+    }
+  });
+</script>

@@ -1,0 +1,29 @@
+<% if @current_user %>
+  <div class="row">
+    <div class="col-9"></div>
+    <div class="col-3 text-right">
+      <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#newMatchModal">
+        <%= fa_icon :plus %> Create
+      </button>
+    </div>
+  </div>
+  <div class="row rooms_box">
+    <% @rooms.each do |room| %>
+      <%= render partial: 'rooms/room', locals: { room: room } %>
+    <% end %>
+  </div>
+<% end %>
+<% if @current_user %>
+  <%= render 'shared/modals/new_room' %>
+<% else %>
+  <%= render 'shared/modals/login_modal', user: @new_user %>
+  <%= render 'shared/modals/register_modal', user: @new_user %>
+<% end %>
+
+<script type="text/javascript">
+  App.rooms = App.cable.subscriptions.create('RoomsChannel', {
+    received: function(data) {
+      $('div.rooms_box').append(data['html']);
+    }
+  });
+</script>

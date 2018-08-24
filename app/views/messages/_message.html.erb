@@ -1,0 +1,4 @@
+<%= image_tag message.sender.avatar if message.sender %>
+<p><%= message.content %></p>
+<span class="time-left"><%= message.sender.fullname if message.sender %></span>
+<span class="time-right"><%= message.created_at.strftime('%H:%M %d-%m-%Y') %></span>

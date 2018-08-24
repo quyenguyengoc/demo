@@ -1,0 +1,18 @@
+<div class="col-sm-3 m-l-r-auto p-b-30">
+  <div class="block">
+    <%= link_to room, class: 'block3-img dis-block hov-img-zoom' do %>
+      <%= image_tag 'default-room-img.png' %>
+    <% end %>
+    <div class='block3-txt p-t-14'>
+      <h4 class='p-b-7'>
+        <%= link_to room.name, room, class: 'm-text11' %>
+      </h4>
+      <span class='s-text6'>By</span>
+      <span class='s-text7'><%= room.owner.fullname %></span>
+      <p class='s-text8 p-t-16'>
+        <i class='fa fa-users'></i> : <span class='m-l-5'><%= room.participants.size %></span>
+      </p>
+    </div>
+  </div>
+</div>
+
